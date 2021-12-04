@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        //  echo "hello cetagory";
+       
         $result['data'] = Product::all();
 
         return  view('admin/product', $result);
@@ -95,6 +95,7 @@ class ProductController extends Controller
         $result['category'] = DB::table('categories')->where(['status' => 1])->get();
         $result['sizes'] = DB::table('sizes')->where(['status' => 1])->get();
         $result['colors'] = DB::table('colors')->where(['status' => 1])->get();
+        $result['brands'] = DB::table('brands')->where(['status' => 1])->get();
         return view('admin/manage_product', $result);
 
         
@@ -115,9 +116,10 @@ class ProductController extends Controller
             'slot' => 'required|unique:products,slot,' . $request->post('id'),
             $request->post('id'),
 
-            'attr_image.*' => 'mimes:jpg,jpeg,png,webp'
-
-        ]);
+            'attr_image.*' => 'mimes:jpg,jpeg,png,webp',
+           
+            'images.*' => 'mimes:jpg,jpeg,png,webp' 
+      ]);
 
         $paidarr = $request->post('paid');
          $skuarr = $request->post('sku');
@@ -179,9 +181,9 @@ class ProductController extends Controller
             $productAttrArr['products_id'] = $pid;
             $productAttrArr['sku'] = $skuarr[$key];
 
-            $productAttrArr['mrp'] = $mrparr[$key];
-            $productAttrArr['price'] = $pricearr[$key];
-            $productAttrArr['qty'] = $qtyarr[$key];
+            $productAttrArr['mrp'] = (int)$mrparr[$key];
+            $productAttrArr['price'] =(int) $pricearr[$key];
+            $productAttrArr['qty'] =(int) $qtyarr[$key];
 
             if ($size_idarr[$key] == '') {
                 $productAttrArr['size_id'] = 0;
@@ -205,7 +207,8 @@ class ProductController extends Controller
                 $image_name = $rand.'.'.$ext;
                 $request->file("attr_image.$key")->storeAs('/public/media', $image_name);
                 $productAttrArr['attr_image'] = $image_name;
-            } else {
+            }
+             else {
                 $productAttrArr['attr_image'] = '';
             }
 
@@ -218,8 +221,39 @@ class ProductController extends Controller
 
         }
         //** end of product attr code */
+ /*____product multiple images code start __ */
+ 
+     $piidArr=$request->post('piid');       
+ foreach($piidArr as $key => $val)
+ {
 
-        $request->session()->flash('message', $msg);
+    $productImageArr['products_id']=$pid;
+     if($request->hasFile("images.$key")){
+
+        $rand=rand('111111111','999999999');
+        $images=$request->file("images.$key");
+        $ext=$images->extension();
+        $image_name=$rand.'.'.$ext;
+        $request->file("images.$key")->storeAs('/public/media',$image_name);
+        $productImageArr['images']=$image_name;
+     
+    
+        
+    if ($piidArr[$key] != '') {
+        DB::table('product_images')->where(['id' => $piidArr[$key]])->update($productImageArr);
+    } else {
+        DB::table('product_images')->insert($productImageArr);
+    }
+
+    }
+    //  else {
+    //     $productImageArr['images'] = '';
+    // }
+
+ }
+ /*____product multiple images code Ended __ */
+     
+ $request->session()->flash('message', $msg);
         return redirect('admin/product');
  
     }

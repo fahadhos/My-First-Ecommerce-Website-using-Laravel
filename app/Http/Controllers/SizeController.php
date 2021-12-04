@@ -42,7 +42,7 @@ class SizeController extends Controller
             return view('admin/manage_size',$result);
         }
       
-        public function manage_size_process(Request $request)
+        public function manage_size_process(Request $request)//post
         {
             // return $request->post();
             $request->validate([

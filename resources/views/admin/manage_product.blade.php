@@ -3,9 +3,14 @@
 @section('product_select','active')
 @section('container')
 @if($id>0)
-{{$image_required=""}}
+ @php
+  $image_required="";
+@endphp
+
 @else
-{{$image_required="required"}}
+@php
+  $image_required="required";
+@endphp
 @endif
 
 <h3> Mannage product</h3><br>
@@ -26,11 +31,22 @@
 </button>
 </div>
 @enderror
+@error('images.*')
+<div class="alert alert-danger" role="alert">
+{{$message}}
+<button type="button" class="close" data-dismiss="alert"aria-label="Close">
+    <span aria-hidden="true">X</span>
+</button>
+</div>
+@enderror
 
 <a href="{{url('admin/product')}}">
 <button type="button" class="btn btn-success">
 Back
-</button></a>
+</button></a> 
+<!-- for editor script -->
+<script src="{{asset('ckeditor/ckeditor.js')}}"></script>
+
 <div class="row m-t-30">
    <div class="col-md-12">
       <form action="{{route('product.manage_product_process')}}" method="post" enctype="multipart/form-data">
@@ -43,21 +59,17 @@ Back
                     <div class="form-group">
                     <label for="name" class="control-label mb-1">Product Name</label>
                     <input id="name" value="{{$name}}" name="name" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
-                    @error('name')
-                    <div class="alert alert-danger" role="alert">
-                        {{$message}}
-                    </div>
-                    @enderror
+                    
                     </div>
                     <!-- image input -->
                     <div class="form-group">
                     <label for="image" class="control-label mb-1">Product Image</label>
-                    <input id="image" name="image" type="file" class="form-control" aria-required="true" aria-invalid="false" required>        
+                    <input id="image" name="image" type="file" class="form-control" aria-required="true" aria-invalid="false" {{$image_required}}>        
                     @error('image')
-                    <div class="alert alert-danger" role="alert">
-                        {{$message}}
-                    </div>
-                    @enderror
+                <div class="alert alert-danger" role="alert">
+                    {{$message}}
+                </div>
+                @enderror
                 </div>
                 <div class="form-group">
                 <label for="slot" class="control-label mb-1">Product Slot</label>
@@ -87,7 +99,18 @@ Back
         </div>
           <div class="col-md-4">
             <label for="brand" class="control-label mb-1">Product Brand</label>
-            <input id="brand" value="{{$brand}}" name="brand" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
+            <select id="brand" name="brand" type="text"  class="form-control"required>
+                    <option value="">Select Brand </option>
+                    @foreach($brands as $list)
+                    @if($brand==$list->id)
+                    <option selected value="{{$list->id}}">
+                        @else
+                    <option value="{{$list->id}}">
+                        @endif
+                        {{$list->name}}
+                    </option>
+                    @endforeach
+            </select>
             @error('brand')
             <div class="alert alert-danger" role="alert">
                 {{$message}}
@@ -108,25 +131,25 @@ Back
             </div>
             <div class="form-group">
             <label for="desc" class="control-label mb-1">Description</label>
-            <textarea id="desc" name="desc" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
+            <textarea id="desc" name="desc" type="text" class="form-control" aria-required="true" aria-invalid="false"  >
                     {{$desc}} </textarea>
            
             </div>
             <div class="form-group">
             <label for="keywords" class="control-label mb-1">Keywords</label>
-            <textarea id="keywords" name="keywords" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
+            <textarea id="keywords" name="keywords" type="text" class="form-control" aria-required="true" aria-invalid="false"  >
                     {{$keywords}} </textarea>
            
             </div>
             <div class="form-group">
             <label for="technical_specification" class="control-label mb-1">Technical Specification</label>
-            <textarea id="technical_specification" name="technical_specification" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
+            <textarea id="technical_specification" name="technical_specification" type="text" class="form-control" aria-required="true" aria-invalid="false"  >
                     {{$technical_specification}} </textarea>
            
             </div>
             <div class="form-group">
             <label for="uses" class="control-label mb-1">Uses</label>
-            <textarea id="uses" name="uses" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
+            <textarea id="uses" name="uses" type="text" class="form-control" aria-required="true" aria-invalid="false"  >
                     {{$uses}} </textarea>
             </div>
             <div class="form-group">
@@ -137,10 +160,15 @@ Back
         </div>
     </div>  
 </div>
-<!-- Product multiple images code start korlam -->
+<!--__________________ Product multiple images code start korlam___________________________________ -->
 <h2>Product Images</h2><br>
-            <div class="col-lg-12" id="product_images_box">
-              @php 
+            <div class="col-lg-12"  >
+             
+               <div class="card">
+                  <div class="card-body">
+                     <div class="form-group">
+                        <div class="row"id="product_images_box">
+                        @php 
                $loop_count_num=1;
                @endphp
                @foreach($productImagesArr as $key => $val)
@@ -150,16 +178,12 @@ Back
                @endphp
                <input id="piid" name="piid[]"type="hidden" value="{{$pIArr['id']}}">
               
-               <div class="card" id="product_images_{{$loop_count_num++}}">
-                  <div class="card-body">
-                     <div class="form-group">
-                        <div class="row">
-                           
-                           <div class="col-md-2.5">
+                           <div class="col-md-4 product_images_{{$loop_count_num++}}" >
                               <label for="images" class="control-label mb-1">Images</label>
                               <input id="images" name="images[]" type="file" class="form-control" aria-required="true" aria-invalid="false"  >
                               @if($pIArr['images']!='')
-                <img width="100px" src="{{asset('storage/media/'.$pIArr['attr_image'])}}"/> 
+                <a href="{{asset('storage/media/'.$pIArr['images'])}}" target="_blank"><img  width="100px" src="{{asset('storage/media/'.$pIArr['images'])}}"/>
+</a> 
                              @endif
                            
                            </div>
@@ -169,24 +193,24 @@ Back
                                &nbsp; &nbsp; &nbsp; 
                             </label>
                                @if($loop_count_num==2)
-                                <button type="button" class="btn btn-success btn-lg" onclick="add_image_more()"><i class="fas fa-plus"></i>
-                               &nbsp;Add</button>
+                                 &nbsp;&nbsp;&nbsp; <button type="button" class="btn btn-success btn-lg-1" onclick="add_image_more()"><i class="fas fa-plus"></i>
+                             Add</button>
                               @else
                         <a href="{{url('admin/product/product_images_delete/')}}/{{$pIArr['id']}}/{{$id}}"> 
-                         <button class="btn btn-danger btn-lg" type="button"><i class="fas fa-minus"></i> &nbsp; Remove</button> </a>
+                         <button class="btn btn-danger btn-lg-1" type="button"><i class="fas fa-minus"></i> &nbsp; Remove</button> </a>
                               @endif
-                            </div>
-                        </div>
+                         </div>
+             @endforeach 
+             </div>
                      </div>
                   </div>
                </div>
            
-             @endforeach 
               </div>
-              <!-- End of product Images code -->
+              <!--__________________________________ End of product Images code _________________________________________________________________________________________-->
          
 <!--**** 
- product attributes code  down bellow -->
+ _____________________product attributes code  down bellow____________________________________________________________________________________ -->
           <h2>Product Attributes</h2><br>
             <div class="col-lg-12" id="product_attr_box">
               @php 
@@ -208,7 +232,7 @@ Back
                               <input id="sku" name="sku[]" value="{{$pAArr['sku']}}" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
                               @error('sku_error')
                               <div class="alert alert-danger" role="alert">
-                                 {{$message}}
+                                 {{$message}}                                                   
                               </div>
                               @enderror
                            </div>
@@ -350,10 +374,15 @@ Back
 
    var loop_image_count=1;
    function add_image_more()
-   {loop_image_count++;
-    html+=' <div class="col-md-2.5">  <label for="attr_image" class="control-label mb-1">Image</label>  <input id="attr_image" name="attr_image[]" type="file" class="form-control" aria-required="true" aria-invalid="false" required>   </div>';
-   html+='  <div class="col-md-2" id="remove">  <label for="removebtn" class="control-label mb-1">&nbsp; &nbsp; &nbsp;</label>   <button class="btn btn-danger btn-lg" onclick=remove_more("'+loop_count+'")><i class="fas fa-minus"></i> &nbsp; Remove</button>                           </div>';
- 
+   {
+      loop_image_count++;
+    var html='<input id="piid" name="piid[]"type="hidden" value=""><div class="col-md-4 product_images_'+loop_image_count+'" ><label for="images" class="control-label mb-1">Image</label><input id="images" name="images[]" type="file" class="form-control" aria-required="true" aria-invalid="false" > </div>';
+    html+='<div class="col-md-2 product_images_'+loop_image_count+'"><label for="images" class="control-label mb-1">&nbsp; &nbsp; &nbsp;</label>   <button class="btn btn-danger btn-lg-1" onclick=remove_image_more("'+loop_image_count+'")><i class="fas fa-minus"></i> &nbsp; Remove</button></div>';
+   
+    jQuery('#product_images_box').append(html)
+   }
+   function remove_image_more(loop_image_count){
+      jQuery('.product_images_'+loop_image_count).remove()
    }
 
 </script>

@@ -72,6 +72,10 @@
                                 <i class="fas fa-tshirt"  aria-hidden="true" > </i>Size
                             </a>
                         </li>
+                        <li class="@yield('brand_select')">
+                        <a href="{{url('admin/brand')}}">
+                        <i class="fab fa-slack"></i>Brand </a>
+                        </li>
                         <li class="@yield('color_select')">
                         <a href="{{url('admin/color')}}">
                                 <i class="zmdi zmdi-invert-colors" aria-hidden="true" ></i>Color
@@ -120,6 +124,10 @@
                                 <i class="fas fa-tshirt" aria-hidden="true" ></i>Size
                             </a>
                         </li>
+                        </li>
+                        <li class="@yield('brand_select')">
+                        <a href="{{url('admin/brand')}}">
+                        <i class="fab fa-slack"></i>Brand </a>
                         </li>
                         <li class="@yield('color_select')">
                         <a href="{{url('admin/color')}}">

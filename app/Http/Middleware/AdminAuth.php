@@ -20,7 +20,7 @@ class AdminAuth
         {
         // $request->session()->put('ADMIN_LOGIN',true);
             
-  //$request->session()->put('ADMIN_ID',$request['0']->id);
+    //$request->session()->put('ADMIN_ID',$request['0']->id);
 
     //return redirect('admin/dashboard');
        

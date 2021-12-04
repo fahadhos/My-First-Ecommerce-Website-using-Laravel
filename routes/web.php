@@ -9,6 +9,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\BrandController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -33,17 +34,19 @@ Route::post('admin/auth', [AdminController::class, 'auth'])
 
 Route::group(['middleware' => 'admin_auth'], function () {
    Route::get('admin/dashboard', [AdminController::class,'dashboard']); 
+ //  Route::get('admin/updatepass', [AdminController::class,'updatepass']); 
+   
 
    //for category 
-   Route::get('admin/category', [CategoryController::class,'index']);
-    Route::get('admin/category/manage_category',[CategoryController::class, 'manage_category']);
-    Route::get('admin/category/manage_category/{id}',[CategoryController::class, 'manage_category']);
- Route::post('admin/category/manage_category_process',[CategoryController::class, 'manage_category_process'])
-    ->name('category.manage_category_process');
- Route::get('admin/category/delete/{id}',[CategoryController::class, 'delete']);
-   
- Route::get('admin/category/status/{status}/{id}',[CategoryController::class, 'status']);
-   
+Route::get('admin/category', [CategoryController::class,'index']);
+Route::get('admin/category/manage_category',[CategoryController::class, 'manage_category']);
+Route::get('admin/category/manage_category/{id}',[CategoryController::class, 'manage_category']);
+Route::post('admin/category/manage_category_process',[CategoryController::class, 'manage_category_process'])
+->name('category.manage_category_process');
+Route::get('admin/category/delete/{id}',[CategoryController::class, 'delete']);
+
+Route::get('admin/category/status/{status}/{id}',[CategoryController::class, 'status']);
+
 //  for Coupon api
  Route::get('admin/coupon', [CouponController::class, 
     'index']);
@@ -65,7 +68,7 @@ Route::get('admin/size', [SizeController::class,'index']);
  Route::get('admin/size/delete/{id}',[SizeController::class, 'delete']);
   
  Route::get('admin/size/status/{status}/{id}',[SizeController::class, 'status']);
-// for Color 
+// for Color API 
 Route::get('admin/color', [ColorController::class,'index']);
     Route::get('admin/color/manage_color',[ColorController::class,'manage_color']);
     Route::get('admin/color/manage_color/{id}',[ColorController::class,'manage_color']);
@@ -74,7 +77,18 @@ Route::get('admin/color', [ColorController::class,'index']);
  Route::get('admin/color/delete/{id}',[ColorController::class, 'delete']);
   
  Route::get('admin/color/status/{status}/{id}',[ColorController::class, 'status']);
-// product api
+// for Brand API 
+Route::get('admin/brand', [BrandController::class,'index']);
+    Route::get('admin/brand/manage_brand',[BrandController::class,'manage_brand']);
+    Route::get('admin/brand/manage_brand/{id}',[BrandController::class,'manage_brand']);
+
+    Route::post('admin/brand/manage_brand_process',[BrandController::class, 'manage_brand_process'])->name('brand.manage_brand_process');
+ Route::get('admin/brand/delete/{id}',[BrandController::class, 'delete']);
+  
+ Route::get('admin/brand/status/{status}/{id}',[BrandController::class, 'status']);
+
+
+ //Add  product api
 Route::get('admin/product', [ProductController::class,'index']);
 Route::get('admin/product/manage_product',[ProductController::class, 'manage_product']);
 Route::get('admin/product/manage_product/{id}',[ProductController::class, 'manage_product']);
