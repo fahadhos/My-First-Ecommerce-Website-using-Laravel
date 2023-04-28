@@ -1,4 +1,0 @@
-[[redirects]]
-from  = "*/"
-to = "/category.blade.php"
-status = 200
