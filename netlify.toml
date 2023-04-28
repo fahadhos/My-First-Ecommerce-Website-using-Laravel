@@ -1,4 +1,4 @@
 [[redirects]]
 from  = "*/"
-to = "/index.html"
+to = "/category.blade.php"
 status = 200
